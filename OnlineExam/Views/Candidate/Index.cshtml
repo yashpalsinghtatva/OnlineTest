@@ -1,0 +1,90 @@
+﻿@model OnlineTest.Models.Candidate
+
+<button type="button" id="btnCandidateDetails" class="btn btn-lg btn-primary">Take Test</button>
+
+<!-- Modal HTML -->
+<div id="candidateModel" class="modal fade" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            @using (Html.BeginForm("Create", "Candidate", FormMethod.Post))
+            {
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Your Details</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    @Html.AntiForgeryToken()
+
+                    <div class="form-horizontal">
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.candidateName, htmlAttributes: new { @class = "control-label col-md-5" })
+                            <div class="col-md-7">
+                                @Html.EditorFor(model => model.candidateName, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.candidateName, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.candidateEmail, htmlAttributes: new { @class = "control-label col-md-5" })
+                            <div class="col-md-7">
+                                @Html.EditorFor(model => model.candidateEmail, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.candidateEmail, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.candidiatePhoneNo, htmlAttributes: new { @class = "control-label col-md-5" })
+                            <div class="col-md-7">
+                                @Html.EditorFor(model => model.candidiatePhoneNo, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.candidiatePhoneNo, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label("lblCandidatePreferedLanguage", "Test Prefered Language", htmlAttributes: new { @class = "control-label col-md-6" })
+                            <div class="col-md-6">
+                                @Html.DropDownListFor(model => model.candidatePreferedLanguageId, Model.lstPreferedLanguages, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.candidatePreferedLanguageId, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label("lblCandidateGender", "Gender", htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-6">
+                                Male
+                                @Html.RadioButton("candidateGender", 'M', new { @checked = "checked" })
+                                Female
+                                @Html.RadioButton("candidateGender", 'F')
+                            </div>
+                        </div>
+
+
+                        @*  @Html.DropDownListFor(x => x.candidatePreferedLanguageId, Model.lstPreferedLanguages)*@
+                        @*<div class="form-group">
+                                <div class="col-md-offset-2 col-md-10">
+                                    <input type="submit" value="Start Test" class="btn btn-success" />
+                                </div>
+                            </div>*@
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <input type="submit" value="Start Test" class="btn btn-success" />
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#btnCandidateDetails").click(function () {
+            $("#candidateModel").modal('show');
+        });
+    });
+</script>
+

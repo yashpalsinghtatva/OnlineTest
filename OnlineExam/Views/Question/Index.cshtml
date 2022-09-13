@@ -1,0 +1,136 @@
+﻿@model OnlineTest.Models.Question
+@using OnlineTest.Models
+<style>
+    body {
+        background-color: #eee;
+    }
+
+    label.radio {
+        cursor: pointer;
+    }
+
+        label.radio input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        label.radio span {
+            padding: 4px 0px;
+            border: 1px solid red;
+            display: inline-block;
+            color: red;
+            width: 100px;
+            text-align: center;
+            border-radius: 3px;
+            margin-top: 7px;
+            text-transform: uppercase;
+        }
+
+        label.radio input:checked + span {
+            border-color: red;
+            background-color: red;
+            color: #fff;
+        }
+
+    .ans {
+        margin-left: 36px !important;
+    }
+
+    .btn:focus {
+        outline: 0 !important;
+        box-shadow: none !important;
+    }
+
+    .btn:active {
+        outline: 0 !important;
+        box-shadow: none !important;
+    }
+</style>
+@using (Html.BeginForm("NextPrev", "Question", FormMethod.Post))
+{
+    <div class="container mt-5">
+        <div class="d-flex justify-content-center row">
+            <div class="col-md-10 col-lg-10">
+                <div class="border">
+                    <div class="question bg-white p-3 border-bottom">
+                        <div class="d-flex flex-row justify-content-between align-items-center mcq">
+                            <h4>MCQ Quiz</h4><span>(@ViewBag.CurrentQuestion of @ViewBag.TotalQuestions)</span>
+                        </div>
+                    </div>
+                    <div class="question bg-white p-3 border-bottom">
+                        <div class="d-flex flex-row justify-content-between align-items-center mcq">
+                            @for (int i = 1; i <= ViewBag.TotalQuestions; i++)
+                            {
+                                if (i == @ViewBag.CurrentQuestion)
+                                {
+                                    <button name="submitButton" id="btnNumber" type="submit" value="Question+@i" class="btn btn-info btn-circle btn-xl">@i</button>
+                                }
+                                else if (@ViewBag.selectedQuestionNumbers != null && @ViewBag.selectedQuestionNumbers.Contains(i))
+                                {
+                                    <button name="submitButton" id="btnNumber" type="submit" value="Question+@i" class="btn btn-danger btn-circle btn-xl">@i</button>
+                                }
+                                else
+                                {
+                                    <button name="submitButton" id="btnNumber" type="submit" value="Question+@i" class="btn btn-secondary btn-circle btn-xl">@i</button>
+
+                                }
+
+                            }
+
+                        </div>
+                    </div>
+                    <div class="question bg-white p-3 border-bottom">
+                        <div class="d-flex flex-row align-items-center question-title">
+                            <h3 class="text-danger">Q.</h3>
+                            <h5 class="mt-1 ml-2"><pre style="white-space: break-spaces;">@Html.Raw(Model.questionText) </pre> </h5>
+                        </div>
+                        <input type="hidden" name="questionId" id="questionId" value="@Model.questionId" />
+                        <input type="hidden" name="currentRecordNo" id="currentRecordNo" value="@ViewBag.CurrentQuestion" />
+                        @if (Model.questionType.QuestionTypeId == (int)Globals.QuestionType.TF)
+                        {
+                            <div class="ans ml-2">
+                                <label class="radio">
+                                    <input type="radio" name="userAnswer" value="true" @(Model.userAnswer !=null && String.Join(" ",Model.userAnswer).Trim().ToLower().Equals("true") ? "checked" :"") > <span>True</span>
+                                </label>
+                            </div>
+                            <div class="ans ml-2">
+                                <label class="radio">
+                                    <input type="radio" name="userAnswer" value="false" @(Model.userAnswer !=null && String.Join(" ",Model.userAnswer).Trim().ToLower().Equals("flase") ? "checked" :"") > <span>False</span>
+                                </label>
+                            </div>
+                        }
+                        else if (Model.questionType.QuestionTypeId == (int)Globals.QuestionType.FIB)
+                        {
+                            <div class="ans ml-2">
+                                <input type="text" name="userAnswer" id="userAnswer" placeholder="enter answer" value='@(Model.userAnswer !=null ? String.Join(" ",Model.userAnswer):"")'/>
+                            </div>
+                        }
+                        else
+                        {
+                            @foreach (var option in Model.options)
+                            {
+                                <div class="ans ml-2">
+                                    <label class="radio">
+                                        <input type="checkbox" @(Model.userAnswer!=null && Model.userAnswer.Contains(option.optionText)?"checked":"")  name="userAnswer" value="@option.optionText"> <span>@option.optionText</span>
+                                    </label>
+                                </div>
+                            }
+                        }
+
+                    </div>
+                    <div class="d-flex flex-row justify-content-between align-items-center p-3 bg-white">
+                        @if (ViewBag.CurrentQuestion != 1)
+                        {
+                            <button class="btn btn-primary d-flex align-items-center btn-danger" name="submitButton" id="BtnPrev" type="submit" value="Prev"><i class="fa fa-angle-left mt-1 mr-1"></i>&nbsp;previous</button>
+                        }
+                        <button class="btn btn-primary border-success align-items-center btn-success" name="submitButton" id="BtnNext" type="submit" value="@(ViewBag.CurrentQuestion == @ViewBag.TotalQuestions ? "Submit" : "Next")">@(ViewBag.CurrentQuestion == @ViewBag.TotalQuestions ? "Submit" : "Next")<i class="fa fa-angle-right ml-2"></i></button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

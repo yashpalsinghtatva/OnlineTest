@@ -1,0 +1,172 @@
+﻿@model OnlineTest.Models.ResultViewModel
+
+<style>
+    body {
+        background-color: #eee;
+    }
+
+    label.radio {
+        cursor: pointer;
+    }
+
+        label.radio input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        label.radio span {
+            padding: 4px 0px;
+            border: 1px solid red;
+            display: inline-block;
+            color: red;
+            width: 100px;
+            text-align: center;
+            border-radius: 3px;
+            margin-top: 7px;
+            text-transform: uppercase;
+        }
+
+        label.radio input:checked + span {
+            border-color: red;
+            background-color: red;
+            color: #fff;
+        }
+
+    .ans {
+        margin-left: 36px !important;
+    }
+
+    .btn:focus {
+        outline: 0 !important;
+        box-shadow: none !important;
+    }
+
+    .btn:active {
+        outline: 0 !important;
+        box-shadow: none !important;
+    }
+</style>
+
+<script src="~/js/echarts.js"></script>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>ECharts</title>
+    <!-- Include the ECharts file you just downloaded -->
+</head>
+<body>
+    <!-- Prepare a DOM with a defined width and height for ECharts -->
+    <div id="main" style="width: 600px;height:400px; left:40px;"></div>
+    <div style="padding :0px 400px;">You got <b> @Model.result.obtainedScore </b> from <b> @Model.result.totalScore </b></div>
+    @foreach (var question in Model.questions)
+    {
+        <div class="container mt-5">
+            <div class="d-flex justify-content-center row">
+                <div class="col-md-10 col-lg-10">
+                    <div class="border">
+                        <div class="question bg-white p-3 border-bottom">
+                            <div class="d-flex flex-row justify-content-between align-items-center mcq">
+                                @*         <h4>MCQ Quiz</h4><span>(@ViewBag.CurrentQuestion of @ViewBag.TotalQuestions)</span>*@
+                            </div>
+                        </div>
+                        <div class="question bg-white p-3 border-bottom">
+                            <div class="d-flex flex-row align-items-center question-title">
+                                <h3 class="text-danger">Q.</h3>
+                                <h5 class="mt-1 ml-2">@question.questionText</h5>
+                            </div>
+                            @*<input type="hidden" name="questionId" id="questionId" value="@Model.questionId" />
+                                <input type="hidden" name="currentRecordNo" id="currentRecordNo" value="@ViewBag.CurrentQuestion" />*@
+                            @foreach (var option in question.options)
+                            {
+                                <div class="ans ml-2" style="width: auto;">
+                                    <label class="radio">
+                                        <label  value="@option.optionText"> @option.optionText </label>
+                                    </label>
+                                </div>
+
+                            }
+                            <div class="d-flex flex-row align-items-center question-title">
+                                <h3 class="text-success">Ans :</h3>
+                                @foreach (var answer in question.answers)
+                                {
+                                    <h5 class="mt-1 ml-2">@answer.AnswerText</h5>
+                                }
+                            </div>
+                            <div class="d-flex flex-row align-items-center question-title">
+                                @*@String.Join(" ",question.answers.ForEach(x=> return x.AnswerText))*@
+                                <h3 class="text-success">Your Ans : </h3>
+                                @if (Model.savedUserAnswers != null)
+                                {
+                                    foreach (var answer in Model.savedUserAnswers)
+                                    {
+                                        if (answer.Key.ToString().Equals(question.questionId.ToString()))
+                                        {
+                                            <h5 class="mt-1 ml-2"> @String.Join(" ", answer.Value)</h5>
+
+                                        }
+                                    }
+
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    }
+
+    <script type="text/javascript">
+
+        var chartDom = document.getElementById('main');
+        var colorPalette = ['#00b04f', '#ffbf00', 'ff0000']
+            var myChart = echarts.init(chartDom);
+            var option;
+
+        option = {
+                title: {
+                    text: 'Test Result',
+                    left: 'center'
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: function (params) {
+                        let res = "";
+
+                        res += "Value : " + params.value.toLocaleString() + '</br>';
+                        res += "Percent : " + params.percent + '%</br>';
+
+                        return res;
+                    }
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 'left'
+                },
+                series: [
+                    {
+                        name: 'Online Test',
+                        color: colorPalette,
+                        type: 'pie',
+                        radius: '50%',
+                        label: {
+                            show: false
+                        },
+                        data: [
+                            { value: @Model.result.obtainedScore, name: 'Correct' },
+                            { value: @Model.result.IncorrectScore, name: 'In Correct' }
+                        ]
+                    }
+                ]
+            };
+            option && myChart.setOption(option);
+    </script>
+
+</body>
+
+</html>
